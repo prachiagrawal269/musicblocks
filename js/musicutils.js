@@ -1251,7 +1251,7 @@ function reducedFraction(a, b) {
 
 function validateAndSetParams(obj, params) {
 
-    if(params !== undefined){
+    if(obj && obj !== null && params && params !== undefined){
         for (var key in obj){
             if (key in params && params[key]! == undefined)
                 obj[key] = params[key];
@@ -1279,6 +1279,7 @@ function Synth(){
         console.log('drum loaded');
     };
 
+    /* Function that provides default parameters for various synths*/
     this.getDefaultParamValues = function (source_name) {
 
         if (source_name.toLowerCase() === 'amsynth') {
@@ -1413,6 +1414,21 @@ function Synth(){
                 },
             };
         }
+        else if( (source_name.toLowerCase() === 'pluck') ) {
+             var synthOptions = {
+                "attackNoise" : 1,
+                "dampening" : 4000,
+                "resonance" : 0.9
+            };
+        }
+        else if( (source_name.toLowerCase() === 'poly') ) {
+            var synthOptions = {
+                polyphony : 6
+            };
+        }
+        else {
+            var synthOptions = {};
+        }
 
         return synthOptions;
     }
@@ -1453,6 +1469,9 @@ function Synth(){
     /* Function using builtin synths from Tone.js. */
     this.createBuiltinSynth = function (instrument_name, source_name, params) {
 
+        var synthOptions = getDefaultParamValues(source_name);
+        synthOptions = validateAndSetParams(synthOptions, params);
+
         switch (source_name) {
             case 'sine':
             case 'triangle':
@@ -1460,28 +1479,16 @@ function Synth(){
             case 'sawtooth':
                 
                 instruments_source[instrument_name] = [3, source_name];
-                var synthOptions = getDefaultParamValues(source_name);
-                synthOptions = validateAndSetParams(synthOptions, params);
                 var builtin_synth = new Tone.Synth(synthOptions);
                 break;
-            case 'pluck':
-                var synthOptions = {
-                    "attackNoise" : 1,
-                    "dampening" : 4000,
-                    "resonance" : 0.9
-                };
-                
-               synthOptions = validateAndSetParams(synthOptions, params);
-               instruments_source[instrument_name] = [3, source_name];
-               var builtin_synth = new Tone.PluckSynth(synthOptions);
+            case 'pluck':               
+            
+                instruments_source[instrument_name] = [3, source_name];
+                var builtin_synth = new Tone.PluckSynth(synthOptions);
                 break;
             case 'poly':
-                var synthOptions = {
-                    polyphony : 6
-                };
 
-                instruments_source[instrument_name] = [0, 'poly'];
-                synthOptions = validateAndSetParams(synthOptions, params);
+                instruments_source[instrument_name] = [0, 'poly'];            
                 var builtin_synth = new Tone.PolySynth(synthOptions.polyphony, Tone.AMSynth);
                 break;
             default :
@@ -1620,7 +1627,7 @@ function Synth(){
     /* generalised version of "trigger and "triggerwitheffects" functions */
     this.trigger = function (notes, beatValue, instrument_name, params_effects) {
 
-        if (params_effects && params_effects != 'null' && params_effects != ' undefined'){
+        if (params_effects && params_effects !== 'null' && params_effects != ' undefined'){
             if (params_effects['vibratoIntensity'] != 0) {
                 params_effects.doVibrato = true;
             }

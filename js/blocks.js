@@ -3554,6 +3554,7 @@ function Blocks () {
 
                 if (_THIS_IS_MUSIC_BLOCKS_) {
                     // Load the synth for this drum
+                    console.log(value);
                     this.logo.synth.loadSynth(getDrumSynthName(value));
                 }
                 break;

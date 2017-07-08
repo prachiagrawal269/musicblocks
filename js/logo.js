@@ -219,8 +219,9 @@ function Logo () {
     if (_THIS_IS_MUSIC_BLOCKS_) {
         // Load the default synthesizer
         this.synth = new Synth();
+        this.synth.createDefaultSynth();
      //   this.synth.loadSynth('poly');
-        this.loadDefaultSynth();
+        this.synth.loadSynth('default');
     } else {
         this.turtleOscs = {};
     }
