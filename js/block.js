@@ -12,7 +12,7 @@
 
 // Length of a long touch
 const LONGPRESSTIME = 1500;
-const COLLAPSABLES = ['drum', 'start', 'action', 'matrix', 'pitchdrummatrix', 'rhythmruler', 'status', 'pitchstaircase', 'tempo', 'pitchslider', 'modewidget'];
+const COLLAPSABLES = ['drum', 'start', 'action', 'matrix', 'pitchdrummatrix', 'rhythmruler', 'timbre', 'status', 'pitchstaircase', 'tempo', 'pitchslider', 'modewidget'];
 const NOHIT = ['hidden', 'hiddennoflow'];
 const SPECIALINPUTS = ['text', 'number', 'solfege', 'eastindiansolfege', 'notename', 'voicename', 'modename', 'drumname'];
 
@@ -467,7 +467,6 @@ function Block(protoblock, blocks, overrideName) {
                 artwork = artwork.replace('arg_label_' + i, myBlock.protoblock.staticLabels[i]);
             }
 
-            myBlock.blocks.blockArt[myBlock.blocks.blockList.indexOf(myBlock)] = artwork;
             _makeBitmap(artwork, myBlock.name, __processHighlightBitmap, myBlock);
         };
 
@@ -642,6 +641,9 @@ function Block(protoblock, blocks, overrideName) {
                 case 'rhythmruler':
                     myBlock.collapseText = new createjs.Text(_('ruler'), fontSize + 'px Sans', '#000000');
                     break;
+                case 'timbre':
+                    myBlock.collapseText = new createjs.Text(_('timbre'), fontSize + 'px Sans', '#000000');
+                    break;    
                 case 'pitchstaircase':
                     myBlock.collapseText = new createjs.Text(_('stair'), fontSize + 'px Sans', '#000000');
                     break;

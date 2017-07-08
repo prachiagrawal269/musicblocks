@@ -42,8 +42,6 @@ function Blocks () {
     // and a list of the blocks we create.
     this.blockList = [];
 
-    this.blockArt = {};
-
     // Track the time with mouse down.
     this.mouseDownTime = 0;
     this.longPressTimeout = null;
@@ -703,9 +701,9 @@ function Blocks () {
 
     this.addDefaultBlock = function (parentblk, oldBlock, skipOldBlock) {
         // Add an action name whenever the user removes the name from
-        // an action block.  Add a box name whenever the user removes
-        // the name from a storein block.  Add a Silence block
-        // whenever the user removes all the blocks from a Note block.
+        // an action block.
+        // Add a Silence block whenever the user removes all the
+        // blocks from a Note block.
         if (parentblk == null) {
             return;
         }
@@ -760,30 +758,10 @@ function Blocks () {
 
                 this._makeNewBlockWithConnections('text', 0, [parentblk], postProcess, [parentblk, oldBlock], false);
             }
-        } else if (this.blockList[parentblk].name === 'storein') {
-            var cblk = this.blockList[parentblk].connections[1];
-            if (cblk == null) {
-                var that = this;
-                postProcess = function (args) {
-                    var parentblk = args[0];
-                    var oldBlock = args[1];
+            return;
+        }
 
-                    var blk = that.blockList.length - 1;
-                    that.blockList[parentblk].connections[1] = blk;
-                    that.blockList[blk].value = _('box');
-                    var label = that.blockList[blk].value;
-                    if (label.length > 8) {
-                        label = label.substr(0, 7) + '...';
-                    }
-                    that.blockList[blk].text.text = label;
-                    that.blockList[blk].container.updateCache();
-
-                    that.adjustDocks(parentblk, true);
-                };
-
-                this._makeNewBlockWithConnections('text', 0, [parentblk], postProcess, [parentblk, oldBlock], false);
-            }
-        } else if (['newnote', 'osctime'].indexOf(this.blockList[parentblk].name) !== -1) {
+        if (['newnote', 'osctime'].indexOf(this.blockList[parentblk].name) !== -1) {
             var cblk = this.blockList[parentblk].connections[2];
             if (cblk == null) {
                 var blkname = 'vspace';
@@ -802,6 +780,7 @@ function Blocks () {
                 this.blockList[newSilenceBlock].connections[1] = null;
                 this.blockList[cblk].connections[1] = newSilenceBlock;
             }
+            return;
         }
     };
 
@@ -858,9 +837,7 @@ function Blocks () {
         //     or add a silence block.
         // (6) Is it the name of an action block? In which case we
         //     need to check to see if we need to rename it.
-        // (7) Is it the name of a storein block? In which case we
-        //     need to check to see if we need to add a palette entry.
-        // (8) And we need to recheck if it inside of a expandable block.
+        // (7) And we need to recheck if it inside of a expandable block.
 
         // Find any containing expandable blocks.
         this._clampBlocksToCheck = [];
@@ -1042,9 +1019,7 @@ function Blocks () {
                 // from an action block (c[1] arg), we need to ensure we have
                 // a unique action name; Whenever we connect to a newnote
                 // block (c[2] flow), we need to ensure we have either a silence
-                // block or a pitch block. And if we are connecting to a
-                // storein block, we need to ensure that there is a palette
-                // entry for the new namedbox.
+                // block or a pitch block.
                 insertAfterDefault = false;
                 if (this.blockList[newBlock].isArgClamp()) {
                     if ((this.blockList[newBlock].name === 'doArg' || this.blockList[newBlock].name === 'calcArg') && newConnection === 1) {
@@ -1171,19 +1146,6 @@ function Blocks () {
                                 that.renameDos(that.blockList[connection].value, myBlock.value);
                             }, 750);
                         }
-                    } else if (this.blockList[newBlock].name === 'storein') {
-                        // We may need to add new storein and namedo
-                        // blocks to the palette.
-                        if (myBlock.value !== 'box') {
-                            this.newStoreinBlock(myBlock.value);
-                            this.newNamedboxBlock(myBlock.value);
-                            var that = this;
-                            setTimeout(function () {
-                                that.palettes.hide();
-                                that.palettes.updatePalettes('boxes');
-                                that.palettes.show();
-                            }, 500);
-                         }
                     }
                 } else if (!this.blockList[thisBlock].isArgFlowClampBlock()) {
                     var bottom = this.findBottomBlock(thisBlock);
@@ -1805,6 +1767,7 @@ function Blocks () {
     };
 
     this._makeNewBlockWithConnections = function (name, blockOffset, connections, postProcess, postProcessArg, collapsed) {
+
         if (typeof(collapsed) === 'undefined') {
             collapsed = false
         }
@@ -2457,7 +2420,6 @@ function Blocks () {
             console.log('undefined name passed to newStoreinBlock');
             return;
         } else if ('myStorein_' + name in this.protoBlockDict) {
-            // console.log(name + ' already in palette');
             return;
         }
 
@@ -2991,6 +2953,7 @@ function Blocks () {
             case 'pitchdrummatrix':
             case 'rhythmruler':
             case 'pitchstaircase':
+            case 'timbre':
             case 'tempo':
             case 'pitchslider':
             case 'matrix':
@@ -3820,6 +3783,7 @@ function Blocks () {
                 var c = myBlock.connections[1];
                 if (c != null && this.blockList[c].value !== _('box')) {
                     var name = this.blockList[c].value;
+
                     // Is there an old block with this name still around?
                     if (this.protoBlockDict['myStorein_' + name] == undefined) {
                         console.log('adding new storein block ' + name);
@@ -3842,8 +3806,8 @@ function Blocks () {
                 that.palettes.show();
             }, 1500);
         }
+      //  console.log("name: " + name);
         console.log("Finished block loading");
-
         var myCustomEvent = new Event('finishedLoading');
         document.dispatchEvent(myCustomEvent);
     };

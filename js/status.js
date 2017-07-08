@@ -193,9 +193,6 @@ function StatusMatrix() {
             case 'mod':
                 var label = '';
                 break;
-            case 'namedbox':
-                var label = this._logo.blocks.blockList[this._logo.statusFields[i][0]].privateData;
-                break;
             default:
                 var label = this._logo.blocks.blockList[this._logo.statusFields[i][0]].protoblock.staticLabels[0];
                 break;
@@ -262,8 +259,6 @@ function StatusMatrix() {
         // Update status of all of the voices in the matrix.
         var table = docById('statusTable');
 
-	this._logo.updatingStatusMatrix = true;
-
         var activeTurtles = 0;
         for (var turtle = 0; turtle < this._logo.turtles.turtleList.length; turtle++) {
             if (this._logo.turtles.turtleList[turtle].trash) {
@@ -283,14 +278,6 @@ function StatusMatrix() {
                     break;
                 case 'elapsednotes':
                     var value = mixedNumber(this._logo.blocks.blockList[this._logo.statusFields[i][0]].value);
-                    break;
-                case 'namedbox':
-                    var name = this._logo.blocks.blockList[this._logo.statusFields[i][0]].privateData;
-                    if (name in this._logo.boxes) {
-                        var value = this._logo.boxes[name];
-                    } else {
-                        var value = '';
-                    }
                     break;
                 default:
                     var value = this._logo.blocks.blockList[this._logo.statusFields[i][0]].value;
@@ -334,8 +321,6 @@ function StatusMatrix() {
 
             activeTurtles += 1;
         }
-
-	this._logo.updatingStatusMatrix = false;
     };
 
     this._addButton = function(row, icon, iconSize, label) {

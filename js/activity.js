@@ -55,7 +55,7 @@ if (lang.indexOf('-') !== -1) {
 }
 
 if (_THIS_IS_MUSIC_BLOCKS_) {
-    MYDEFINES = ["activity/sugarizer-compatibility", 'activity/platformstyle', 'easeljs-0.8.2.min', 'tweenjs-0.6.2.min', 'preloadjs-0.6.2.min', 'Tone.min', 'howler', 'p5.min', 'p5.sound.min', 'p5.dom.min', 'mespeak', 'Chart', 'activity/utils', 'activity/artwork', 'activity/status', 'activity/munsell', 'activity/trash', 'activity/boundary', 'activity/turtle', 'activity/palette', 'activity/protoblocks', 'activity/blocks', 'activity/block', 'activity/turtledefs', 'activity/logo', 'activity/clearbox', 'activity/utilitybox', 'activity/samplesviewer', 'activity/basicblocks', 'activity/blockfactory', 'activity/analytics', 'activity/modewidget', 'activity/soundsamples', 'activity/pitchtimematrix', 'activity/pitchdrummatrix', 'activity/rhythmruler', 'activity/pitchstaircase', 'activity/tempo', 'activity/pitchslider', 'activity/macros', 'activity/musicutils', 'activity/lilypond', 'prefixfree.min'];
+    MYDEFINES = ["activity/sugarizer-compatibility", 'activity/platformstyle', 'easeljs-0.8.2.min', 'tweenjs-0.6.2.min', 'preloadjs-0.6.2.min', 'Tone.min', 'howler', 'p5.min', 'p5.sound.min', 'p5.dom.min', 'mespeak', 'Chart', 'activity/utils', 'activity/artwork', 'activity/status', 'activity/munsell', 'activity/trash', 'activity/boundary', 'activity/turtle', 'activity/palette', 'activity/protoblocks', 'activity/blocks', 'activity/block', 'activity/turtledefs', 'activity/logo', 'activity/clearbox', 'activity/utilitybox', 'activity/samplesviewer', 'activity/basicblocks', 'activity/blockfactory', 'activity/analytics', 'activity/modewidget', 'activity/soundsamples', 'activity/pitchtimematrix', 'activity/pitchdrummatrix', 'activity/rhythmruler', 'activity/pitchstaircase', 'activity/tempo', 'activity/pitchslider', 'activity/timbre', 'activity/macros', 'activity/musicutils', 'activity/lilypond', 'prefixfree.min'];
 } else {
     MYDEFINES = ["activity/sugarizer-compatibility", 'activity/platformstyle', 'easeljs-0.8.2.min', 'tweenjs-0.6.2.min', 'preloadjs-0.6.2.min', 'howler', 'p5.min', 'p5.sound.min', 'p5.dom.min', 'mespeak', 'Chart', 'activity/utils', 'activity/artwork', 'activity/status', 'activity/munsell', 'activity/trash', 'activity/boundary', 'activity/turtle', 'activity/palette', 'activity/protoblocks', 'activity/blocks', 'activity/block', 'activity/turtledefs', 'activity/logo', 'activity/clearbox', 'activity/savebox', 'activity/utilitybox', 'activity/samplesviewer', 'activity/basicblocks', 'activity/blockfactory', 'activity/analytics', 'activity/macros', 'activity/musicutils', 'activity/lilypond', 'prefixfree.min'];
 }
@@ -81,7 +81,7 @@ define(MYDEFINES, function (compatibility) {
 
         try {
             meSpeak.loadConfig('lib/mespeak_config.json');
-            var lang = document.webL10n.getLanguage();
+	    var lang = document.webL10n.getLanguage();
             if (['es', 'ca', 'de', 'el', 'eo', 'fi', 'fr', 'hu', 'it', 'kn', 'la', 'lv', 'nl', 'pl', 'pt', 'ro', 'sk', 'sv', 'tr', 'zh'].indexOf(lang) !== -1) {
                 meSpeak.loadVoice('lib/voices/' + lang + '.json');
             } else {
@@ -92,6 +92,16 @@ define(MYDEFINES, function (compatibility) {
         }
 
         var canvas = docById('myCanvas');
+
+        var queue = new createjs.LoadQueue(false);
+
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            var files = true;
+        } else {
+            alert('The File APIs are not fully supported in this browser.');
+            var files = false;
+        }
 
         // Set up a file chooser for the doOpen function.
         var fileChooser = docById('myOpenFile');
@@ -113,10 +123,13 @@ define(MYDEFINES, function (compatibility) {
         var thumbnails;
         var buttonsVisible = true;
         var headerContainer = null;
+        var toolbarButtonsVisible = true;
         var menuButtonsVisible = true;
         var menuContainer = null;
         var scrollBlockContainer = false;
+        var currentKey = '';
         var currentKeyCode = 0;
+        var lastKeyCode = 0;
         var pasteContainer = null;
         var pasteImage = null;
         var chartBitmap = null;
@@ -149,9 +162,19 @@ define(MYDEFINES, function (compatibility) {
         var macroDict = {};
 
         var stopTurtleContainer = null;
+        var stopTurtleContainerX = 0;
+        var stopTurtleContainerY = 0;
         var homeButtonContainers = [];
+        var homeButtonContainersX = 0;
+        var homeButtonContainersY = 0;
 
         var cameraID = null;
+        var toLang = null;
+        var fromLang = null;
+
+        // initial scroll position
+        var scrollX = 0;
+        var scrollY = 0;
 
         // default values
         const DEFAULTDELAY = 500; // milleseconds
@@ -162,6 +185,12 @@ define(MYDEFINES, function (compatibility) {
         if (blockscale === -1) {
             blockscale = 1;
         }
+
+        // Time when we hit run
+        var time = 0;
+
+        // Used by pause block
+        var waitTime = {};
 
         // Used to track mouse state for mouse button block
         var stageMouseDown = false;
@@ -237,76 +266,6 @@ define(MYDEFINES, function (compatibility) {
             homeButtonContainers[1].visible = true;
             boundary.hide();
         };
-
-        function _printBlockSVG() {
-            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + logo.canvas.width + '" height="' + logo.canvas.height + '">';
-            for (var i = 0; i < blocks.blockList.length; i++) {
-                if (blocks.blockList[i].name === 'hidden') {
-                    continue;
-                }
-                if (blocks.blockList[i].name === 'hiddennoflow') {
-                    continue;
-                }
-                if (blocks.blockList[i].trash) {
-                    continue;
-                }
-                var parts = blocks.blockArt[i].split('><');
-                svg += '<g transform="translate(' + blocks.blockList[i].container.x + ', ' + blocks.blockList[i].container.y + ')">';
-                switch(blocks.blockList[i].name) {
-                case 'text':
-                case 'solfege':
-                case 'eastindiansolfege':
-                case 'notename':
-                case 'rest':
-                case 'number':
-                case 'modename':
-                case 'voicename':
-                case 'drumname':
-                    for (var p = 1; p < parts.length; p++) {
-                        // FIXME: This is fragile.
-                        if (p === 1) {
-                            svg += '<' +  parts[p] + '><';
-                        } else if (p === 2) {
-                            // skip filter
-                        } else if (p === 3) {
-			    svg += parts[p].replace('filter:url(#dropshadow);', '') + '><';
-                        } else if (p === 5) {
-                            // Add block value to SVG between tspans
-                            svg += parts[p] + '>' + blocks.blockList[i].value + '<';
-                        } else if (p === parts.length - 2) {
-                            svg += parts[p] + '>';
-                        } else if (p === parts.length - 1) {
-                            // skip final </svg>
-                        } else {
-                            svg += parts[p] + '><';
-                        }
-                    }
-                    break;
-                default:
-                    for (var p = 1; p < parts.length; p++) {
-                        // FIXME: This is fragile.
-                        if (p === 1) {
-                            svg += '<' +  parts[p] + '><';
-                        } else if (p === 2) {
-                            // skip filter
-                        } else if (p === 3) {
-			    svg += parts[p].replace('filter:url(#dropshadow);', '') + '><';
-                        } else if (p === parts.length - 2) {
-                            svg += parts[p] + '>';
-                        } else if (p === parts.length - 1) {
-                            // skip final </svg>
-                        } else {
-                            svg += parts[p] + '><';
-                        }
-                    }
-                    break;
-                }
-                svg += '</g>';
-            }
-            svg += '</svg>';
-            download('blockArtwork.svg', 'data:image/svg+xml;utf8,' + svg, 'blockArtwork.svg', '"width=' + logo.canvas.width + ', height=' + logo.canvas.height + '"');
-
-        }
 
         function _allClear() {
             if (chartBitmap != null) {
@@ -431,7 +390,10 @@ define(MYDEFINES, function (compatibility) {
         };
 
         function _doStepButton() {
-            var turtleCount = Object.keys(logo.stepQueue).length;
+            var turtleCount = 0;
+            for (var turtle in logo.stepQueue) {
+                turtleCount += 1;
+            }
 
             if (turtleCount === 0 || logo.turtleDelay !== TURTLESTEP) {
                 // Either we haven't set up a queue or we are
@@ -461,7 +423,10 @@ define(MYDEFINES, function (compatibility) {
         };
 
         function _doStepMusicButton() {
-            var turtleCount = Object.keys(logo.stepQueue).length;
+            var turtleCount = 0;
+            for (var turtle in logo.stepQueue) {
+                turtleCount += 1;
+            }
 
             if (turtleCount === 0 || logo.TurtleDelay !== TURTLESTEP) {
                 // Either we haven't set up a queue or we are
@@ -478,6 +443,7 @@ define(MYDEFINES, function (compatibility) {
             }
         };
 
+        var stopTurtle = false;
 
         function doStopButton() {
             logo.doStopTurtle();
@@ -587,6 +553,12 @@ define(MYDEFINES, function (compatibility) {
 
         // Do we need to update the stage?
         var update = true;
+
+        // The dictionary of action name: block
+        var actions = {};
+
+        // The dictionary of box name: value
+        var boxes = {};
 
         // Coordinate grid
         var cartesianBitmap = null;
@@ -723,8 +695,8 @@ define(MYDEFINES, function (compatibility) {
                 .setClear(sendAllToTrash);
 
             if (_THIS_IS_TURTLE_BLOCKS_) {
-                saveBox = new SaveBox();
-                saveBox
+		saveBox = new SaveBox();
+		saveBox
                     .setCanvas(canvas)
                     .setStage(stage)
                     .setRefreshCanvas(refreshCanvas)
@@ -735,7 +707,7 @@ define(MYDEFINES, function (compatibility) {
                     .setSaveFB(doShareOnFacebook);
             }
 
-            utilityBox = new UtilityBox();
+	    utilityBox = new UtilityBox();
             utilityBox
                 .setStage(stage)
                 .setRefreshCanvas(refreshCanvas)
@@ -1213,9 +1185,6 @@ define(MYDEFINES, function (compatibility) {
 
             if (event.altKey) {
                 switch (event.keyCode) {
-                case 66: // 'B'
-                    _printBlockSVG();
-                    break;
                 case 69: // 'E'
                     _allClear();
                     break;
@@ -1297,10 +1266,13 @@ define(MYDEFINES, function (compatibility) {
                     logo.runLogoCommands();
                     break;
                 default:
+                    // currentKey = String.fromCharCode(event.keyCode);
+                    // currentKeyCode = event.keyCode;
                     break;
                 }
                 // Always store current key so as not to mask it from
                 // the keyboard block.
+                currentKey = String.fromCharCode(event.keyCode);
                 currentKeyCode = event.keyCode;
             }
         };
@@ -1613,6 +1585,7 @@ define(MYDEFINES, function (compatibility) {
             if (_THIS_IS_MUSIC_BLOCKS_) {
                 localStorage.setItem('isMatrixHidden', docById('ptmDiv').style.visibility);
                 localStorage.setItem('isStaircaseHidden', docById('pscDiv').style.visibility);
+                localStorage.setItem('isTimbreHidden', docById('timbreDiv').style.visibility);
                 localStorage.setItem('isPitchDrumMatrixHidden', docById('pdmDiv').style.visibility);
                 localStorage.setItem('isRhythmRulerHidden', docById('rulerDiv').style.visibility);
                 localStorage.setItem('isModeWidgetHidden', docById('modeDiv').style.visibility);
@@ -1641,6 +1614,12 @@ define(MYDEFINES, function (compatibility) {
                     docById('pscDiv').style.visibility = 'hidden';
                     docById('pscTableDiv').style.visibility = 'hidden';
                     docById('pscButtonsDiv').style.visibility = 'hidden';
+                }
+
+                if (docById('timbreDiv').style.visibility !== 'hidden') {
+                    docById('timbreDiv').style.visibility = 'hidden';
+                    docById('timbreTableDiv').style.visibility = 'hidden';
+                    docById('timbreButtonsDiv').style.visibility = 'hidden';
                 }
 
                 if (docById('statusDiv').style.visibility !== 'hidden') {
@@ -1890,7 +1869,7 @@ define(MYDEFINES, function (compatibility) {
             }
 
             try {
-                var obj = JSON.parse(data);
+		var obj = JSON.parse(data);
                 blocks.loadNewBlocks(obj);
             } catch (e) {
                 console.log('loadRawProject: could not parse project data');
@@ -2280,6 +2259,8 @@ define(MYDEFINES, function (compatibility) {
         };
 
         function _hideStopButton() {
+            // stopTurtleContainer.x = stopTurtleContainerX;
+            // stopTurtleContainer.y = stopTurtleContainerY;
             stopTurtleContainer.visible = false;
         };
 
@@ -2402,9 +2383,13 @@ handleComplete);
 
                 if (buttonNames[i][0] === 'stop-turtle') {
                     stopTurtleContainer = container;
+                    stopTurtleContainerX = x;
+                    stopTurtleContainerY = y;
                 } else if (buttonNames[i][0] === 'go-home') {
                     homeButtonContainers = [];
                     homeButtonContainers.push(container);
+                    homeButtonContainersX = x;
+                    homeButtonContainersY = y;
                     var container2 = _makeButton('go-home-faded-button', _('Home'), x, y, btnSize, 0);
                     _loadButtonDragHandler(container2, x, y, buttonNames[i][1], null, null, null, null);
                     homeButtonContainers.push(container2);
