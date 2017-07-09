@@ -2538,9 +2538,9 @@ function Logo () {
             that.timbre.env = [];
             that.timbre.ENVs = [];
 
-            if (args.length ===1 && typeof(args[0] === 'textin')){
+            if (args.length >= 1 && typeof(args[0] === 'textin')){
                 that.timbre.instrument_name = args[0];
-                console.log(that.timbre.instrument_name);
+             //   console.log('timbre args : ' + args);
             }else{
                 console.log('no args provided');
 
@@ -2662,6 +2662,7 @@ function Logo () {
            
                 console.log('inside envelope block');
                 if (args.length === 4 && typeof(args[0] === 'number')) {
+                   
                 if (args[0] < 0 || args[0] > 100) {
                     that.errorMsg(_('Attack value should be between 0-100'));
                 } 
@@ -2688,10 +2689,12 @@ function Logo () {
                     var envdecay = that.blocks.blockList[blk].connections[2];
                     var envsustain = that.blocks.blockList[blk].connections[3];
                     var envrelease = that.blocks.blockList[blk].connections[4];
+
                     that.timbre.ENVs.push(that.blocks.blockList[envattack].text.text);
                     that.timbre.ENVs.push(that.blocks.blockList[envdecay].text.text);
                     that.timbre.ENVs.push(that.blocks.blockList[envsustain].text.text);
                     that.timbre.ENVs.push(that.blocks.blockList[envrelease].text.text);
+                    console.log(that.timbre.ENVs);
                 }
             break;  
         case 'invert1':
@@ -3497,10 +3500,10 @@ function Logo () {
             console.log('inside set timbre');
 
           //  var instrument_name = null;
-            if (args.length ===1 && typeof(args[0] === 'textin')){
+            if (args.length >= 1 && typeof(args[0] === 'textin')){
 
                 that.set_instrument_name  = args[0];
-                console.log(that.set_instrument_name);
+             //   console.log('settimbre args: ' + args);
             }      
 
           /*  var voicename = null;
@@ -3530,7 +3533,7 @@ function Logo () {
                 childFlowCount = 1;
             } else {
                 
-                console.log('pushing into instrument list: ' + that.set_instrument_name);
+            //    console.log('pushing into instrument list: ' + that.set_instrument_name);
                 that.instrument_names[turtle].push(that.set_instrument_name);
                 childFlow = args[1];
                 childFlowCount = 1;
@@ -5372,7 +5375,7 @@ function Logo () {
                                     } else {
                                         // Look for any notes in the chord that might be in the pitchDrumTable.
                                         if (turtle in that.instrument_names){
-                                            console.log(last(that.instrument_names[turtle]));
+                                            console.log('instrument_name : ' + last(that.instrument_names[turtle]));
                                         }
 
                                         for (var d = 0; d < notes.length; d++) {
@@ -5382,7 +5385,7 @@ function Logo () {
                                                 that.synth.trigger(notes[d], beatValue, that.pitchDrumTable[turtle][notes[d]], null);
                                             } else if (turtle in that.instrument_names && last(that.instrument_names[turtle])) {
                                                 //that.synth.triggerWithEffects(notes[d], beatValue, last(that.voices[turtle]), [vibratoIntensity, vibratoValue], [distortionAmount], [tremoloFrequency, tremoloDepth], [rate, octaves, baseFrequency], [chorusRate, delayTime, chorusDepth]);
-                                                console.log('trying to access synth: ' + last(that.instrument_names[turtle]));
+                                           //     console.log('trying to access synth: ' + last(that.instrument_names[turtle]));
                                                 that.synth.trigger(notes[d], beatValue, last(that.instrument_names[turtle]), params_effects);
                                             } else {
                                                 //that.synth.triggerWithEffects(notes[d], beatValue, 'default', [vibratoIntensity, vibratoValue], [distortionAmount], [tremoloFrequency, tremoloDepth], [rate, octaves, baseFrequency], [chorusRate, delayTime, chorusDepth]);

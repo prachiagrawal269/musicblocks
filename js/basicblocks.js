@@ -495,8 +495,8 @@ function initBasicProtoBlocks(palettes, blocks) {
     envelopeBlock.extraWidth = 10;
     envelopeBlock.adjustWidthToLabel();
     envelopeBlock.defaults.push(10);
-    envelopeBlock.defaults.push(10);
-    envelopeBlock.defaults.push(10);
+    envelopeBlock.defaults.push(0);
+    envelopeBlock.defaults.push(100);
     envelopeBlock.defaults.push(10);
     envelopeBlock.fourArgBlock();
     envelopeBlock.dockTypes[1] = 'numberin';

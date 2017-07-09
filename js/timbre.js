@@ -33,26 +33,28 @@ function TimbreWidget () {
     };
 
     this._updateEnvelope = function(i,m,k) {
-       // console.log("checking envelope...");
+        console.log("checking envelope...");
         if (this.env[i] != null) {
-       //     console.log('env: ' + this.env[i]);
-            var updateEnv = [];
-            for(j=0; j<4; j++){
+            //console.log('env: ' + this.env[i]);
+            var updateEnv0 = this._logo.blocks.blockList[this.env[i]].connections[1];
+            var updateEnvk = this._logo.blocks.blockList[this.env[i]].connections[k+1];
+          /*  for(j=0; j<4; j++){
                 updateEnv[j] = this._logo.blocks.blockList[this.env[i]].connections[j+1];
             }
+          */
 
-            console.log(' envelope: ' + updateEnv[k]);
-            if (updateEnv[0] != null) {
-                this._logo.blocks.blockList[updateEnv[k]].value = m;
-                this._logo.blocks.blockList[updateEnv[k]].text.text = m.toString();
-                this._logo.blocks.blockList[updateEnv[k]].updateCache();
+          //  console.log(' envelope: ' + updateEnv[k]);
+            if (updateEnv0 != null) {
+                this._logo.blocks.blockList[updateEnvk].value = m;
+                this._logo.blocks.blockList[updateEnvk].text.text = m.toString();
+                this._logo.blocks.blockList[updateEnvk].updateCache();
                 this._logo.refreshCanvas();
                 saveLocally();
             }
         }
-        /*else{
+        else{
             console.log('null value encoutered');
-        }*/
+        }
     };
 
     this.init = function(logo) {
@@ -271,21 +273,21 @@ function TimbreWidget () {
             var temp_index;
             
             temp_index = this._logo.blocks.blockList[this.env[0]].connections[1];
-            synthOptions.envelope.attack = this._logo.blocks.blockList[temp_index].value;
+            synthOptions.envelope.attack = (this._logo.blocks.blockList[temp_index].value)/100;
 
             temp_index = this._logo.blocks.blockList[this.env[0]].connections[2];
-            synthOptions.envelope.decay = this._logo.blocks.blockList[temp_index].value;
+            synthOptions.envelope.decay = (this._logo.blocks.blockList[temp_index].value)/100;
 
             temp_index = this._logo.blocks.blockList[this.env[0]].connections[3];
-            synthOptions.envelope.sustain = this._logo.blocks.blockList[temp_index].value;
+            synthOptions.envelope.sustain = (this._logo.blocks.blockList[temp_index].value)/100;
 
             temp_index = this._logo.blocks.blockList[this.env[0]].connections[4];
-            synthOptions.envelope.release = this._logo.blocks.blockList[temp_index].value;          
+            synthOptions.envelope.release = (this._logo.blocks.blockList[temp_index].value)/100;  
 
         }
 
         /*create synth as per user's entry*/
-       // console.log(this.instrument_name);
+      //  console.log('about to create synth: ' + this.instrument_name);
        
        /* Currently the source is set as sine for testing purpose*/
         this._logo.synth.createSynth(this.instrument_name, "sine", synthOptions);

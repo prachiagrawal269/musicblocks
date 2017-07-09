@@ -946,15 +946,18 @@ function Blocks () {
                     break;
                 }
 
-                if ((i === this.blockList[b].connections.length - 1) && (this.blockList[b].connections[i] != null) && (this.blockList[this.blockList[b].connections[i]].isNoHitBlock())) {
+                if ( (i === this.blockList[b].connections.length - 1) && (this.blockList[b].connections[i] != null) && (this.blockList[this.blockList[b].connections[i]]) && 
+                    (this.blockList[this.blockList[b].connections[i]] != undefined) && (this.blockList[this.blockList[b].connections[i]].isNoHitBlock()) ) {
                     // Don't break the connection between a block and
                     // a hidden block below it.
                     continue;
-                } else if ((['backward', 'status'].indexOf(this.blockList[b].name) !== -1) && (i === 1) && (this.blockList[b].connections[1] != null) && (this.blockList[this.blockList[b].connections[1]].isNoHitBlock())) {
+                } else if ( (['backward', 'status'].indexOf(this.blockList[b].name) !== -1) && (i === 1) && (this.blockList[b].connections[1] != null) && 
+                    (this.blockList[this.blockList[b].connections[1]]) && (this.blockList[this.blockList[b].connections[1]] !== undefined) && (this.blockList[this.blockList[b].connections[1]].isNoHitBlock()) ) {
                     // Don't break the connection betweem a backward
                     // block and a hidden block attached to its clamp.
                     continue;
-                } else if (this.blockList[b].name === 'action' && (i === 2) && (this.blockList[b].connections[2] != null) && (this.blockList[this.blockList[b].connections[2]].isNoHitBlock())) {
+                } else if (this.blockList[b].name === 'action' && (i === 2) && (this.blockList[b].connections[2] != null) && 
+                    (this.blockList[this.blockList[b].connections[2]]) && (this.blockList[this.blockList[b].connections[2]] !== undefined) && (this.blockList[this.blockList[b].connections[2]].isNoHitBlock())) {
                     // Don't break the connection betweem an action
                     // block and a hidden block attached to its clamp.
                     continue;

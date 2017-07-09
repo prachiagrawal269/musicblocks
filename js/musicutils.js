@@ -1562,6 +1562,8 @@ function Synth(){
     }
 
     this.performNotes = function (synth, notes, beatValue, params) {
+
+     //   console.log('inside performNotes');
         if (params === null) {
 
             synth.triggerAttackRelease(notes, beatValue);
@@ -1655,6 +1657,7 @@ function Synth(){
         var temp_synth = instruments['default'];
         if (instrument_name in instruments){
 
+          //  console.log('instrument ' + instrument_name + ' found');
             temp_synth = instruments[instrument_name];
             flag = instruments_source[instrument_name][0];
             if (flag==1 || flag==2){
@@ -1683,6 +1686,11 @@ function Synth(){
             else if (instrument_name in  voice_samples){
                 temp_synth = createSampleSynth(instrument_name);
                 flag = 2;
+            }else{
+
+                console.log(instrument_name +  ' synth not found, using the custom synth');
+                temp_synth = instruments['default'];
+                flag = 0;
             }
         }
 
@@ -1699,7 +1707,7 @@ function Synth(){
             temp_notes = noteNo - centerNo;
         }
         else if(flag == 3) {
-            console.log("builtin synth found");
+          //  console.log("builtin synth found");
             if (typeof(notes) === 'object') {
                 temp_notes = notes[0];
             } 
@@ -1708,10 +1716,10 @@ function Synth(){
             }
         }
 
-
         if (flag != 1){
 
-            this.performNotes(temp_synth, temp_notes, beatValue, params_effects);
+          //  temp_synth = new Tone.PolySynth(6, Tone.AMSynth);
+            this.performNotes(temp_synth.toMaster(), temp_notes, beatValue, params_effects);
         }
         else{
             // drum samples
