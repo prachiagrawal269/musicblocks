@@ -475,18 +475,15 @@ function initBasicProtoBlocks(palettes, blocks) {
     rhythm2.twoArgBlock();
     rhythm2.dockTypes[1] = 'anyin';
     rhythm2.dockTypes[2] = 'anyin';
-
+    
     var sourceBlock = new ProtoBlock('source');
     sourceBlock.palette = palettes.dict['widgets'];
     blocks.protoBlockDict['source'] = sourceBlock;
-    sourceBlock.staticLabels.push(_('source'), _('synth'), _('parameter'));
-    sourceBlock.extraWidth = 10;
+    sourceBlock.staticLabels.push(_('source'));
     sourceBlock.adjustWidthToLabel();
-    sourceBlock.defaults.push(_('AMSynth'));
-    sourceBlock.defaults.push(4);
-    sourceBlock.twoArgBlock();
+    sourceBlock.oneArgBlock();
     sourceBlock.dockTypes[1] = 'textin';
-    sourceBlock.dockTypes[2] = 'numberin';
+    sourceBlock.defaults.push(_('sine'));
 
     var envelopeBlock = new ProtoBlock('envelope');
     envelopeBlock.palette = palettes.dict['widgets'];
@@ -1072,7 +1069,8 @@ function initBasicProtoBlocks(palettes, blocks) {
     blocks.protoBlockDict['settimbre'] = setTimbreBlock;
     setTimbreBlock.staticLabels.push(_('set timbre'));
     setTimbreBlock.adjustWidthToLabel();
-    setTimbreBlock.flowClampTextOneArgBlock();
+    setTimbreBlock.flowClampOneArgBlock();
+    setTimbreBlock.dockTypes[1] = 'textin';
     setTimbreBlock.defaults.push(_('custom'));  
 
     var newslurBlock = new ProtoBlock('newslur');

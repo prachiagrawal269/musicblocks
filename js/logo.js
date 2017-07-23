@@ -63,6 +63,7 @@ function Logo () {
     this.decay = {};
     this.sustain = {};
     this.release = {};
+    this.source_name = {};
 
 
     this.evalFlowDict = {};
@@ -2540,7 +2541,7 @@ function Logo () {
 
             if (args.length >= 1 && typeof(args[0] === 'textin')){
                 that.timbre.instrument_name = args[0];
-             //   console.log('timbre args : ' + args);
+                console.log('timbre args : ' + args);
             }else{
                 console.log('no args provided');
 
@@ -2663,28 +2664,28 @@ function Logo () {
                 console.log('inside envelope block');
                 if (args.length === 4 && typeof(args[0] === 'number')) {
                    
-                if (args[0] < 0 || args[0] > 100) {
-                    that.errorMsg(_('Attack value should be between 0-100'));
-                } 
-                if (args[1] < 0 || args[1] > 100) {
-                    that.errorMsg(_('Decay value should be between 0-100'));
-                } 
-                if (args[2] < 0 || args[2] > 100) {
-                    that.errorMsg(_('Sustain value should be between 0-100'));
-                } 
-                if (args[3] < 0 || args[3] > 100) {
-                    that.errorMsg(_('Release value should be between 0-100'));
-                } 
+                    if (args[0] < 0 || args[0] > 100) {
+                        that.errorMsg(_('Attack value should be between 0-100'));
+                    } 
+                    if (args[1] < 0 || args[1] > 100) {
+                        that.errorMsg(_('Decay value should be between 0-100'));
+                    } 
+                    if (args[2] < 0 || args[2] > 100) {
+                        that.errorMsg(_('Sustain value should be between 0-100'));
+                    } 
+                    if (args[3] < 0 || args[3] > 100) {
+                        that.errorMsg(_('Release value should be between 0-100'));
+                    } 
 
-                that.attack = args[0] / 100;
-                that.decay = args[1] / 100;
-                that.sustain = args[2] / 100;
-                that.release = args[3] / 100;
-
-            }
+                    that.attack = args[0] / 100;
+                    that.decay = args[1] / 100;
+                    that.sustain = args[2] / 100;
+                    that.release = args[3] / 100;
+                }
 
                 if(that.inTimbre) {
                     that.timbre.env.push(blk);
+                    console.log('connections: ' + that.blocks.blockList[blk].connections);
                     var envattack = that.blocks.blockList[blk].connections[1];
                     var envdecay = that.blocks.blockList[blk].connections[2];
                     var envsustain = that.blocks.blockList[blk].connections[3];
@@ -2695,6 +2696,23 @@ function Logo () {
                     that.timbre.ENVs.push(that.blocks.blockList[envsustain].text.text);
                     that.timbre.ENVs.push(that.blocks.blockList[envrelease].text.text);
                     console.log(that.timbre.ENVs);
+                }
+            break;
+
+        case 'source':
+           
+                console.log('inside source block');
+                if (args.length >=1 && typeof(args[0] === 'textin')) {
+                    that.source_name = args[0];
+                }
+
+                if(that.inTimbre) {
+                    that.timbre.source_blk.push(blk);
+                    if (that.blocks.blockList[blk].connections){
+                        var temp_source = that.blocks.blockList[blk].connections[1];
+                        that.timbre.source_name.push(that.blocks.blockList[temp_source].value);
+                        console.log('source_name: ' + that.timbre.source_name);
+                    }
                 }
             break;  
         case 'invert1':
@@ -3685,6 +3703,7 @@ function Logo () {
         case 'vibrato':
             var intensity = args[0];
             var rate = args[1];
+          //  console.log("vibrato args:- " + 'intensity: ' + intensity + ' rate: ' + rate);
 
             if (intensity < 1 || intensity > 100) {
                 that.errorMsg(_('Vibrato intensity must be between 1 and 100.'), blk);
@@ -3701,6 +3720,7 @@ function Logo () {
 
             that.vibratoIntensity[turtle].push(intensity / 100);
             that.vibratoRate[turtle].push(Math.floor(Math.pow(rate, -1)));
+        //    console.log('vibrato rate: ' + that.vibratoRate[turtle]);
 
             var listenerName = '_vibrato_' + turtle;
             that._setDispatchBlock(blk, turtle, listenerName);
@@ -4927,6 +4947,8 @@ function Logo () {
     };
 
     this._processNote = function (noteValue, blk, turtle) {
+    //  console.log('blk: ' + blk);
+    //  console.log('inside processNote');
         if (this.bpm[turtle].length > 0) {
             var bpmFactor = TONEBPM / last(this.bpm[turtle]);
         } else {
@@ -4965,6 +4987,7 @@ function Logo () {
         var doPhaser = false;
         var doChorus = false;
         if (this.vibratoRate[turtle].length > 0) {
+        //  console.log('vibrato effect applied');
             vibratoRate = last(this.vibratoRate[turtle]);
             vibratoIntensity = last(this.vibratoIntensity[turtle]);
             doVibrato = true;
@@ -5357,6 +5380,7 @@ function Logo () {
                                      };
 
                         //             debugger;
+                                    
 
                                     if (that.oscList[turtle].length > 0) {
                                         if (notes.length > 1) {
@@ -5414,6 +5438,7 @@ function Logo () {
                         if (!that.suppressOutput[turtle] && duration > 0) {
                             if (_THIS_IS_MUSIC_BLOCKS_) {
                                 for (var i = 0; i < drums.length; i++) {
+
                                     if (that.drumStyle[turtle].length > 0) {
 
                                        // that.synth.triggerWithEffects(['C2'], beatValue, last(that.drumStyle[turtle]), [], [], [], [], []);

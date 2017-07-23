@@ -122,6 +122,7 @@ function getMacroExpansion (blkname, x, y) {
         const SKIPOBJ = [[0, 'skipnotes', x, y, [null, 1, null, 2]], [1, ['number', {'value': 2}], 0, 0, [0]], [2, 'hidden', 0, 0, [0, null]]];
         const SLAPOBJ = [[0, 'playdrum', x, y, [null, 1, null]], [1, ['drumname', {'value': _('slap')}], 0, 0, [0]]];
         const SLUROBJ = [[0, 'slur', x, y, [null, 1, null, 2]], [1, ['number', {'value': 16}], 0, 0, [0]], [2, 'hidden', 0, 0, [0, null]]];
+        const SOURCEOBJ = [[0, 'source', x, y, [null, 1, null, 2]], [1, ['voicename', {'value': _('violin')}], 0, 0, [0]], [2, 'hidden', 0, 0, [0, null]]];
         const SNAREOBJ = [[0, 'playdrum', x, y, [null, 1, null]], [1, ['drumname', {'value': _('snare drum')}], 0, 0, [0]]];
         const SPLASHOBJ = [[0, 'playdrum', x, y, [null, 1, null]], [1, ['drumname', {'value': _('splash')}], 0, 0, [0]]];
         const SQUAREOBJ = [[0, 'note', x, y, [null, 1, 2, 4]], [1, ['number', {'value': 8}], 0, 0, [0]], [2, 'square', 0, 0, [0, 3, null]], [3, ['number', {'value': 440}], 0, 0, [2]], [4, 'hidden', 0, 0, [0, null]]];
@@ -276,6 +277,7 @@ function getMacroExpansion (blkname, x, y) {
             'slap': SLAPOBJ,
             'slur': SLUROBJ,
             'snare': SNAREOBJ,
+            'source': SOURCEOBJ,
             'splash': SPLASHOBJ,
             'square': SQUAREOBJ,
             'staccato': STACCATOOBJ,

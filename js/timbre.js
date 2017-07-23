@@ -7,8 +7,11 @@ function TimbreWidget () {
     var timbreTableDiv = docById('timbreTableDiv');
     this.env = [];
     this.ENVs = [];
+    this.source_blk = [];
+    this.source_name = [];
     this.instrument_name = 'custom';
     var that = this;
+
     console.log('timbre initialised');
     this._addButton = function(row, icon, iconSize, label) {
         var cell = row.insertCell(-1);
@@ -189,6 +192,10 @@ function TimbreWidget () {
 
     };
 
+    this._source = function() {
+
+    };
+
     this._envelope = function() {
     	var slider = [];
     	var val = [];
@@ -286,10 +293,15 @@ function TimbreWidget () {
 
         }
 
+        var synth_source = "sine";
+        if (this.source_blk[0] != null) {
+            var temp_index = this._logo.blocks.blockList[this.source_blk[this.source_blk.length-1]].connections[1];
+            //var temp_index = this._logo.blocks.blockList[this.source_blk[0]].connections[1];
+            synth_source = this._logo.blocks.blockList[temp_index].value;
+           
+        }
+
         /*create synth as per user's entry*/
-      //  console.log('about to create synth: ' + this.instrument_name);
-       
-       /* Currently the source is set as sine for testing purpose*/
-        this._logo.synth.createSynth(this.instrument_name, "sine", synthOptions);
+        this._logo.synth.createSynth(this.instrument_name, synth_source, synthOptions);
     }
 };
