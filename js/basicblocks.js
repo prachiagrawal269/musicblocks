@@ -1065,16 +1065,15 @@ function initBasicProtoBlocks(palettes, blocks) {
     staccatoBlock.adjustWidthToLabel();
     staccatoBlock.flowClampOneArgBlock();
     staccatoBlock.defaults.push(32);
-    staccatoBlock.hidden = true;
-
+    staccatoBlock.hidden = true;    
+    
     var setTimbreBlock = new ProtoBlock('settimbre');
     setTimbreBlock.palette = palettes.dict['tone'];
     blocks.protoBlockDict['settimbre'] = setTimbreBlock;
     setTimbreBlock.staticLabels.push(_('set timbre'));
     setTimbreBlock.adjustWidthToLabel();
-    setTimbreBlock.stackClampOneArgBlock();
-    setTimbreBlock.defaults.push(_('custom'));
-    timbreBlock.dockTypes[1] = 'textin';
+    setTimbreBlock.flowClampTextOneArgBlock();
+    setTimbreBlock.defaults.push(_('custom'));  
 
     var newslurBlock = new ProtoBlock('newslur');
     newslurBlock.palette = palettes.dict['tone'];
