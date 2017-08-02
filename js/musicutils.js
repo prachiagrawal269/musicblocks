@@ -1440,10 +1440,24 @@ function Synth(){
         var default_synth = new Tone.PolySynth(6, Tone.AMSynth).toMaster();
         instruments["custom"] = default_synth;
         instruments["default"] = default_synth;
-        instruments["poly"] = default_synth;
+    //    instruments["poly"] = default_synth;
         instruments_source["custom"] = [0, "custom"];
         instruments_source["default"] = [0, "default"];
-        instruments_source["poly"] = [0, "poly"]; 
+     //   instruments_source["poly"] = [0, "poly"]; 
+
+        for (var blt in builtin_synths) {
+            this.createSynth(blt, blt, null);
+        }
+
+        for (var voice in voice_samples){
+            //console.log(drm);
+            this.createSynth(voice, voice, null);
+        }
+
+        for (var drm in drum_samples){
+           // console.log(drm);
+            this.createSynth(drm, drm, null);
+        }
     }
 
     /* Function reponsible for creating the synth using the existing samples: drums and voices*/
@@ -1462,7 +1476,7 @@ function Synth(){
         else{
             // default drum sample
             instruments_source[instrument_name] = [1, 'drum'];
-            var temp_synth = new Tone.Sampler(drum_samples(DEFAULTDRUM));
+            var temp_synth = new Tone.Sampler(drum_samples[DEFAULTDRUM]);
         }
     
         //temp_synth = validateAndSetParams(temp_synth, params);       
@@ -1554,20 +1568,37 @@ function Synth(){
         }
         else{
             console.log('weblink or file');
-            if (source_name.slice(0, 4) == 'http') {
-                instruments[source_name] = new Tone.Sampler(source_name).toMaster();
-            } else if (source_name.slice(0, 4) == 'file') {
-                instruments[source_name] = new Tone.Sampler(source_name).toMaster();
-            } else if (source_name === 'drum') {
-                instruments[source_name] = this.createSampleSynth(source_name, source_name, null).toMaster();
-                instruments_source[instrument_name] = [1, 'drum'];
-            } 
+            if(source_name.length >=4){
+                console.log('length greater than 3');
+                if (source_name.slice(0, 4) == 'http') {
+                    instruments[source_name] = new Tone.Sampler(source_name).toMaster();
+                    instruments_source[instrument_name] = [1, 'drum'];
+                }
+                else if (source_name.slice(0, 4) == 'file') {
+                    instruments[source_name] = new Tone.Sampler(source_name).toMaster();
+                    instruments_source[instrument_name] = [1, 'drum'];
+                }
+                else if (source_name === 'drum') {
+                    instruments[source_name] = this.createSampleSynth(source_name, source_name, null).toMaster();
+                    instruments_source[instrument_name] = [1, 'drum'];
+                }
+            }
         }
     };
 
-    this.loadSynth = function (instrument_name) {
+    this.loadSynth = function (source_name) {
+    //    instruments_source[source_name] = [3, source_name];
 
-        return instruments[instrument_name].toMaster();
+        if(instruments[source_name] == null){
+            console.log('inside loadSynth');
+
+            this.createSynth(source_name, source_name, null);
+        }
+        if(source_name in instruments)
+            return instruments[source_name].toMaster();
+
+        return null;
+        
     }
 
     this.performNotes = function (synth, notes, beatValue, params_effects) {
@@ -1665,16 +1696,23 @@ function Synth(){
         var flag = 0;
         var temp_synth = instruments['default'];
         if (instrument_name in instruments){
-
+            console.log('instrument found');
             temp_synth = instruments[instrument_name];
             flag = instruments_source[instrument_name][0];
             if (flag==1 || flag==2){
                 var sample_name = instruments_source[instrument_name][1];
             }
         } 
-        else{
-
-            if ((instrument_name.toLowerCase() === 'poly') || (instrument_name.toLowerCase() === 'default')) { 
+       /* else{
+            console.log('no such instrument: trigger');
+            temp_synth = this.loadSynth(instrument_name);
+            if (temp_synth == null){
+                console.log('null inside trigger');
+                temp_synth = instruments['default'];
+            }else{
+                console.log('finally created timbre');
+            }
+          /*  if ((instrument_name.toLowerCase() === 'poly') || (instrument_name.toLowerCase() === 'default')) { 
 
                 temp_synth = instruments['default'];
                 flag = 0;
@@ -1690,9 +1728,24 @@ function Synth(){
             else if( (instrument_name in drum_samples) || (instrument_name.toLowerCase() === 'drum' || (instrument_name.slice(0, 4) === 'http')) || (instrument_name.slice(0, 4) === 'file')){
                 //var temp_synth = createSampleSynth(instrument_name);
                 flag = 1;
+
+                if(instrument_name in drum_samples){
+                  //  temp_synth = new Tone.Sampler(drum_samples[instrument_name]).toMaster();
+                  temp_synth = instruments["test"];
+                }
+                else if(instrument_name.slice(0,4) === 'http'){
+                    temp_synth = new Tone.Sampler(instrument_name).toMaster();
+                }
+                else if(instrument_name.slice(0,4) === 'file'){
+                    temp_synth = new Tone.Sampler(instrument_name).toMaster();
+                }
+                else{
+                    temp_synth = new Tone.Sampler(drum_samples[DEFAULTDRUM]).toMaster();
+                }
+
             }
             else if (instrument_name in  voice_samples){
-                temp_synth = createSampleSynth(instrument_name);
+                temp_synth = createSampleSynth(voice_samples[instrument_name]);
                 flag = 2;
             }else{
 
@@ -1700,7 +1753,9 @@ function Synth(){
                 temp_synth = instruments['default'];
                 flag = 0;
             }
+            
         }
+        */
 
         var temp_notes = notes;
         /*get note values as per the source of the synth*/
@@ -1730,20 +1785,20 @@ function Synth(){
             this.performNotes(temp_synth.toMaster(), temp_notes, beatValue, params_effects);
         }
         else{
+
+
             // drum samples
             if(instrument_name.slice(0, 4) == 'http'){
-                temp_synth = new Tone.Sampler(instrument_name);
-                temp_synth.toMaster();
+                
+            //    temp_synth.toMaster();
                 temp_synth.triggerAttack(0, beatValue);
             }
             else if (instrument_name.slice(0, 4) == 'file'){
-                temp_synth = new Tone.Sampler(instrument_name);
-                temp_synth.toMaster();
+                            //    temp_synth.toMaster();
                 temp_synth.triggerAttack(0, beatValue);
             }
             else{
-               // instruments[instrument_name].triggerAttack(0);
-               temp_synth.triggerAttack(0);
+                temp_synth.triggerAttack(0);
             }
         }
         

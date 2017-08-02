@@ -484,7 +484,7 @@ function initBasicProtoBlocks(palettes, blocks) {
     sourceBlock.oneArgBlock();
     sourceBlock.dockTypes[1] = 'textin';
     sourceBlock.defaults.push(_('sine'));
-
+    
     var envelopeBlock = new ProtoBlock('envelope');
     envelopeBlock.palette = palettes.dict['widgets'];
     blocks.protoBlockDict['envelope'] = envelopeBlock;

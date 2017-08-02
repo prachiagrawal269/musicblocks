@@ -1527,7 +1527,7 @@ function Blocks () {
         }
 
         var topBlockLoop = 0;
-        while (myBlock.connections[0] != null) {
+        while (myBlock!=null && myBlock.connections[0] != null) {
             topBlockLoop += 1;
             if (topBlockLoop > 2 * this.blockList.length) {
                 // Could happen if the block data is malformed.
@@ -3526,6 +3526,10 @@ function Blocks () {
                 }
                 break;
             case 'voicename':
+            
+            //    if(args!=null){
+            //       console.log(args);
+            
                 postProcess = function (args) {
                     var thisBlock = args[0];
                     var value = args[1];
@@ -3537,8 +3541,10 @@ function Blocks () {
 
                 if (_THIS_IS_MUSIC_BLOCKS_) {
                     // Load the synth for this voice
+                    console.log("value: " + value + " voice: " + getVoiceSynthName(value));
                     this.logo.synth.loadSynth(getVoiceSynthName(value));
                 }
+                
                 break;
             case 'media':
                 // Load a thumbnail into a media blocks.

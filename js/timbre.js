@@ -294,14 +294,16 @@ function TimbreWidget () {
         }
 
         var synth_source = "sine";
+        
         if (this.source_blk[0] != null) {
             var temp_index = this._logo.blocks.blockList[this.source_blk[this.source_blk.length-1]].connections[1];
             //var temp_index = this._logo.blocks.blockList[this.source_blk[0]].connections[1];
-            synth_source = this._logo.blocks.blockList[temp_index].value;
+            var synth_source = this._logo.blocks.blockList[temp_index].value;
            
         }
 
         /*create synth as per user's entry*/
         this._logo.synth.createSynth(this.instrument_name, synth_source, synthOptions);
+
     }
 };
