@@ -23,8 +23,10 @@ function TimbreWidget () {
     this.oscParams = [];
     this.tremoloEffect = [];
     this.tremoloParams = [];
+    this.tremoloParamsCurrent = [10, 50];
     this.vibratoEffect = [];
     this.vibratoParams = [];
+    this.vibratoParamsCurrent = [10, 100/16];
     this.chorusEffect = [];
     this.chorusParams = [];
     this.phaserEffect = [];
@@ -180,6 +182,13 @@ function TimbreWidget () {
 
     this.init = function(logo) {
         this._logo = logo;
+      /*  if (this.instrument_name) {
+            console.log(this.instrument_name);
+        }
+        */
+        
+        instruments[this.instrument_name] = instruments['custom'];
+        instruments_source[this.instrument_name] = [0, this.instrument_name];
         
         var w = window.innerWidth;
         this._cellScale = w / 1200;
@@ -775,7 +784,7 @@ function TimbreWidget () {
     this._envelope = function() {
         var that = this;
         var blockValue = 0;
-        var synth_source = "triangle";
+        var synth_source = "sine";
 
         if(this.env.length != 1) {
             blockValue = this.env.length - 1;
@@ -1042,6 +1051,9 @@ function TimbreWidget () {
                             docById("myRangeFx"+m).value = parseFloat(elem.value);
                             docById("myspanFx"+m).textContent = elem.value;
                             that._update(blockValue, elem.value, Number(m));
+                            that.tremoloParamsCurrent[m] = parseFloat(elem.value);
+                        //    console.log('tremolo params: ' + that.tremoloParamsCurrent);
+                            that._logo.synth.applyEffects(that.instrument_name, effectChosen, that.tremoloParamsCurrent);
                         });    
                     }
                 } else if (effectChosen === "Vibrato") {
@@ -1096,6 +1108,9 @@ function TimbreWidget () {
                         docById("myRangeFx0").value = parseFloat(elem.value);
                         docById("myspanFx0").textContent = elem.value;
                         that._update(that.vibratoEffect.length - 1, elem.value, 0);
+                        that.vibratoParamsCurrent[0] = parseFloat(elem.value);
+                        //    console.log('tremolo params: ' + that.tremoloParamsCurrent);
+                        that._logo.synth.applyEffects(that.instrument_name, effectChosen, that.vibratoParamsCurrent);
                     });    
 
                     document.getElementById("wrapperFx1").addEventListener('change', function(event){
@@ -1107,6 +1122,9 @@ function TimbreWidget () {
                         docById("myspanFx1").textContent = obj[0] + '/' + obj[1];
                         that._update(that.vibratoEffect.length - 1, obj[1], 1);
                         that._update(that.vibratoEffect.length - 1, obj[0], 2);
+                        that.vibratoParamsCurrent[1] = (parseFloat(obj[0])/parseFloat(obj[1]))*100;
+                        //    console.log('tremolo params: ' + that.tremoloParamsCurrent);
+                        that._logo.synth.applyEffects(that.instrument_name, effectChosen, that.vibratoParamsCurrent);
                     });    
                 } else if(effectChosen === "Chorus" ) {
                     that.tremoloActive = false;

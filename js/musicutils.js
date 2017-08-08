@@ -1782,6 +1782,29 @@ function Synth() {
         }
     };
 
+
+    this.applyEffects = function (instrument_name, effectName, params_effects) { 
+        if (effectName === "Tremolo"){
+            var tremolo = new Tone.Tremolo({
+                'frequency': params_effects[0],
+                'depth': params_effects[1]/100
+            }).toMaster().start();
+
+            console.log('applying effects');
+            instruments[instrument_name].chain(tremolo);
+        }
+
+        /* Have to apply efects only while playing 
+          "vibrato" block uses beatvalue, that can only be given while playing the note */
+        that.vibratoIntensity[turtle].push(intensity / 100);
+            that.vibratoRate[turtle].push(Math.floor(Math.pow(rate, -1)));
+       /* else if(effectName === "Vibrato") {
+            var vibrato = new Tone.Vibrato(1 /params_effects.vibratoFrequency, params_effects[1]/100);
+            instruments[instrument_name].chain(vibrato, Tone.Master);
+        }*/
+    }
+    
+
     this.stopSound = function (instrument_name) {
         instruments[instrument_name].triggerRelease();
     };

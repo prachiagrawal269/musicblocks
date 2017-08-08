@@ -3733,6 +3733,7 @@ function Logo () {
         case 'vibrato':
             var intensity = args[0];
             var rate = args[1];
+            console.log('rate: ' + rate);
 
             if (intensity < 1 || intensity > 100) {
                 that.errorMsg(_('Vibrato intensity must be between 1 and 100.'), blk);
