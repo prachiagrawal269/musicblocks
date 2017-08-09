@@ -1173,7 +1173,9 @@ function Logo () {
             that.blocks.highlight(blk, false);
         }
 
+        console.log("name: " + that.blocks.blockList[blk].name);
         switch (that.blocks.blockList[blk].name) {
+        
         case 'dispatch':
             // Dispatch an event.
             if (args.length === 1) {
@@ -3536,6 +3538,7 @@ function Logo () {
             that._setDispatchBlock(blk, turtle, listenerName);
 
             var __listener = function (event) {
+                console.log('calling processNote');
                 that._processNote(noteBeatValue, blk, turtle);
                 that.inNoteBlock[turtle] -= 1;
                 that.pitchBlocks = [];
@@ -4982,6 +4985,7 @@ function Logo () {
     };
 
     this._processNote = function (noteValue, blk, turtle) {
+        console.log('processNote');
         if (this.bpm[turtle].length > 0) {
             var bpmFactor = TONEBPM / last(this.bpm[turtle]);
         } else {
@@ -5019,6 +5023,8 @@ function Logo () {
         var doTremolo = false;
         var doPhaser = false;
         var doChorus = false;
+
+        //console.log('instrument name: ' + last(this.instrument_names[turtle]));
         if (this.vibratoRate[turtle].length > 0) {
             vibratoRate = last(this.vibratoRate[turtle]);
             vibratoIntensity = last(this.vibratoIntensity[turtle]);
