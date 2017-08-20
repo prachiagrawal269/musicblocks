@@ -2777,11 +2777,11 @@ function Logo () {
                 that.timbre.ENVs.push(Math.round(last(that.sustain[turtle]) * 100));
                 that.timbre.ENVs.push(Math.round(last(that.release[turtle]) * 100));
 
-                that.timbre.adsrVals[0] = last(that.attack[turtle]);
-                that.timbre.adsrVals[1] = last(that.decay[turtle]);
-                that.timbre.adsrVals[2] = last(that.sustain[turtle]);
-                that.timbre.adsrVals[3] = last(that.release[turtle]);
-                this.synth.createSynth(that.timbre.instrument_name, synth_source, that.timbre.adsrVals);
+                that.timbre.synthVals['envelope']['attack'] = last(that.attack[turtle]);
+                that.timbre.synthVals['envelope']['decay'] = last(that.decay[turtle]);
+                that.timbre.synthVals['envelope']['sustain'] = last(that.sustain[turtle]);
+                that.timbre.synthVals['envelope']['release'] = last(that.release[turtle]);
+                this.synth.createSynth(that.timbre.instrument_name, synth_source, that.timbre.synthVals);
             }
             break; 
         case 'filter':

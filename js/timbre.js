@@ -7,7 +7,11 @@ function TimbreWidget () {
     var timbreTableDiv = docById('timbreTableDiv');
     this.env = [];
     this.ENVs = [];
-    this.adsrVals = {        
+    this.synthVals = {
+        "oscillator": {
+            "type" : "sine"
+        }
+        ,        
         "envelope": {
             "attack": 0.01,
             "decay": 0.5,
@@ -722,15 +726,19 @@ function TimbreWidget () {
 
         document.getElementById("wrapperOsc0").addEventListener('change', function(event){
             docById("oscillatorButtonCell").style.backgroundColor = "#C8C8C8";
+            console.log('in oscillator type');
             var elem = event.target;
+            that.synthVals['oscillator']['type'] = elem.value;
             //that.oscillatorVals['oscillator'][that.oscillatorMap[0]] = elem.value;
             //var synth_source = "triangle";
             //that._logo.synth.createSynth(that.instrument_name, synth_source, that.oscillatorVals);
             that._update(blockValue, elem.value, 0);
+            that._logo.synth.createSynth(that.instrument_name, that.synthVals['oscillator']['type'], that.synthVals);
         });
 
         document.getElementById("wrapperOsc1").addEventListener('change', function(event){
             docById("oscillatorButtonCell").style.backgroundColor = "#C8C8C8";
+            console.log('in oscillator Partials');
             var elem = event.target;
             docById("myRangeO0").value = parseFloat(elem.value);
             docById("myspanO0").textContent = elem.value;
@@ -757,6 +765,7 @@ function TimbreWidget () {
         btnReset.onclick = function() {
             docById("oscillatorButtonCell").style.backgroundColor = MATRIXBUTTONCOLOR;
             docById('selOsc1').value = that.oscParams[0];
+            that.synthVals['oscillator']['type'] = elem.value;
             //that.oscillatorVals['oscillator'][that.oscillatorMap[0]] = elem.value;
             that._update(blockValue, that.oscParams[0], 0);
             
@@ -766,14 +775,14 @@ function TimbreWidget () {
             that._update(blockValue, that.oscParams[1], 1);
 
             //var synth_source = "triangle";
-            //that._logo.synth.createSynth(that.instrument_name, synth_source, that.oscillatorVals);
+            that._logo.synth.createSynth(that.instrument_name, that.synthVals['oscillator']['type'], that.oscillatorVals);
         }
     };
 
     this._envelope = function() {
         var that = this;
         var blockValue = 0;
-        var synth_source = "triangle";
+       // var synth_source = "triangle";
 
         if(this.env.length != 1) {
             blockValue = this.env.length - 1;
@@ -813,7 +822,7 @@ function TimbreWidget () {
         for (var i = 0; i < 4; i++) {
             docById("myRange"+i).value = parseFloat(that.ENVs[i]);
             docById("myspan"+i).textContent = that.ENVs[i];
-            that.adsrVals['envelope'][that.adsrMap[i]] = parseFloat(that.ENVs[i]) / 100;
+            that.synthVals['envelope'][that.adsrMap[i]] = parseFloat(that.ENVs[i]) / 100;
             that._update(blockValue, that.ENVs[i], i);
         }
 
@@ -825,21 +834,21 @@ function TimbreWidget () {
                 docById("myRange"+m).value = parseFloat(elem.value);
                 docById("myspan"+m).textContent = elem.value;
 
-                that.adsrVals['envelope'][that.adsrMap[m]] = parseFloat(elem.value) / 100;
+                that.synthVals['envelope'][that.adsrMap[m]] = parseFloat(elem.value) / 100;
                 that._update(blockValue, parseFloat(elem.value), m);
-                that._logo.synth.createSynth(that.instrument_name, synth_source, that.adsrVals);
+                that._logo.synth.createSynth(that.instrument_name, that.synthVals['oscillator']['type'], that.synthVals);
             }); 
         }
        
         btnReset.onclick = function() {
             docById("envelopeButtonCell").style.backgroundColor = MATRIXBUTTONCOLOR;
             for(var i = 0; i < 4; i++) {
-                that.adsrVals['envelope'][that.adsrMap[i]] = parseFloat(that.ENVs[i]) / 100;
+                that.synthVals['envelope'][that.adsrMap[i]] = parseFloat(that.ENVs[i]) / 100;
                 docById("myRange"+i).value = parseFloat(that.ENVs[i]);
                 docById("myspan"+i).textContent = that.ENVs[i];
                 that._update(blockValue, parseFloat(that.ENVs[i]), i);
             }
-            that._logo.synth.createSynth(that.instrument_name, synth_source, that.adsrVals);
+            that._logo.synth.createSynth(that.instrument_name, that.synthVals['oscillator']['type'], that.synthVals);
         }
     };
 
