@@ -787,12 +787,18 @@ function Logo () {
 
     this.runLogoCommands = function (startHere, env) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         console.log('runLogo commands');
 =======
         // Restore any broken connections.
         this._restoreConnections();
 
 >>>>>>> upstream/master
+=======
+        // Restore any broken connections.
+        this._restoreConnections();
+
+>>>>>>> timbre_widget_code/Timbre_Widget
         // Save the state before running.
         this.saveLocally();
 
@@ -1011,7 +1017,7 @@ function Logo () {
         // (2) Execute the stack.
         // A bit complicated because we have lots of corner cases:
         if (startHere != null) {
-            console.log('start here');
+//            console.log('start here');
             // console.log('startHere is ' + this.blocks.blockList[startHere].name);
 
             // If a block to start from was passed, find its
@@ -2780,7 +2786,7 @@ function Logo () {
             that._setListener(turtle, listenerName, __listener);
             break;
         case 'envelope':
-            var synth_source = "triangle";
+            var synth_source = "sine";
             if(that.timbre.env.length != 0) {
                 that.errorMsg(_("You are adding a second envelope block"));
                 that.timbre.ENVs = [];
@@ -2816,7 +2822,7 @@ function Logo () {
                 that.timbre.synthVals['envelope']['decay'] = last(that.decay[turtle]);
                 that.timbre.synthVals['envelope']['sustain'] = last(that.sustain[turtle]);
                 that.timbre.synthVals['envelope']['release'] = last(that.release[turtle]);
-                this.synth.createSynth(that.timbre.instrument_name, synth_source, that.timbre.adsrVals);
+             //   this.synth.createSynth(that.timbre.instrument_name, synth_source, that.timbre.adsrVals);
             }
             break; 
         case 'filter':
@@ -2846,11 +2852,11 @@ function Logo () {
             }  
             break;
         case 'oscillator':
-            var oscillatortype = 'triangle';
+            var oscillatortype = 'sine';
             var partials ;
             that.timbre.oscParams = [];
 
-            if(that.timbre.AMSynthesizer.length != 0){
+           /* if(that.timbre.AMSynthesizer.length != 0){
                 that.errorMsg(_("Unable to use oscillator due to existing synth"));
             }
             if(that.timbre.FMSynthesizer.length != 0){
@@ -2858,7 +2864,7 @@ function Logo () {
             }
             if(that.timbre.duoSynthesizer.length != 0){
                 that.errorMsg(_("Unable to use oscillator due to existing synth"));
-            }
+            }*/
 
             if(that.timbre.osc.length != 0) {
                 that.errorMsg(_("You are adding a second oscillator block"));
@@ -4014,10 +4020,10 @@ function Logo () {
             };
             that._setListener(turtle, listenerName, __listener);
             if(that.inTimbre) {
-                    that.timbre.vibratoEffect.push(blk);
-                    that.timbre.vibratoParams.push(last(that.vibratoIntensity[turtle]) * 100);
-                    that.timbre.vibratoParams.push(last(that.vibratoRate[turtle]));
-                }
+                that.timbre.vibratoEffect.push(blk);
+                that.timbre.vibratoParams.push(last(that.vibratoIntensity[turtle]) * 100);
+                that.timbre.vibratoParams.push(last(that.vibratoRate[turtle]));
+            }
             break;
         case 'dis':
             var distortion = (args[0] / 100);
@@ -5380,7 +5386,7 @@ function Logo () {
         var doPhaser = false;
         var doChorus = false;
 
-        // Applying effects inside the timbre block 
+        // Applying effects and filters inside the timbre block 
 
         if ((this.inSetTimbre == true) && (turtle in this.instrument_names) && last(this.instrument_names[turtle])){
             var inst_name = last(this.instrument_names[turtle]);
@@ -5420,6 +5426,7 @@ function Logo () {
                     doChorus = true;
                 }
             }
+
         }
 
         // ------------------------ 
@@ -5746,6 +5753,7 @@ function Logo () {
                                 that.updateNotation(note, that.tieCarryOver[turtle], turtle, insideChord);
                             }
 <<<<<<< HEAD
+<<<<<<< HEAD
                         }
 
                         if (!that.justCounting[turtle]) {
@@ -5753,6 +5761,8 @@ function Logo () {
                             console.log("notes to play " + notes + ' ' + noteBeatValue);
 =======
 >>>>>>> upstream/master
+=======
+>>>>>>> timbre_widget_code/Timbre_Widget
                         } else {
                             // console.log('duration == ' + duration + ' and tieCarryOver === 0 and drift is ' + drift);
                         }
@@ -5790,6 +5800,7 @@ function Logo () {
                             }
                         }
 
+
                         if (!that.suppressOutput[turtle] && duration > 0) {
                             if (_THIS_IS_MUSIC_BLOCKS_ && !forceSilence) {
 
@@ -5818,12 +5829,14 @@ function Logo () {
                                         that.errorMsg(last(that.oscList[turtle]) + ': ' +  _('synth cannot play chords.'), blk);
                                     }
 
+
                                     that.synth.trigger(notes, beatValue, last(that.oscList[turtle]), params_effects);
                                 } else if (that.drumStyle[turtle].length > 0) {
                                     that.synth.trigger(notes, beatValue, last(that.drumStyle[turtle]), null);
                                 } else if (that.turtles.turtleList[turtle].drum) {
                                     that.synth.trigger(notes, beatValue, 'drum', null);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
                                         for (var d = 0; d < notes.length; d++) {
                                             if (notes[d] in that.pitchDrumTable[turtle]) {
@@ -5839,6 +5852,9 @@ function Logo () {
                                                 that.synth.trigger(notes[d], beatValue, 'default', params_effects);
                                             }
 =======
+=======
+
+>>>>>>> timbre_widget_code/Timbre_Widget
                                 } else {
                                     // Look for any notes in the chord
                                     // that might be in the
@@ -5855,7 +5871,11 @@ function Logo () {
                                         }
                                         else {
                                             that.synth.trigger(notes[d], beatValue, 'default', params_effects);
+<<<<<<< HEAD
 >>>>>>> upstream/master
+=======
+
+>>>>>>> timbre_widget_code/Timbre_Widget
                                         }
                                     }
                                 }
@@ -5882,11 +5902,13 @@ function Logo () {
 
                                 if (that.drumStyle[turtle].length > 0) {
 
+
                                     // that.synth.triggerWithEffects(['C2'], beatValue, last(that.drumStyle[turtle]), [], [], [], [], []);
                                     that.synth.trigger(['C2'], beatValue, last(that.drumStyle[turtle]), null);
                                 } else {
                                     // that.synth.triggerWithEffects(['C2'], beatValue, drums[i], [], [], [], [], []);
                                     that.synth.trigger(['C2'], beatValue, drums[i], null);
+
                                 }
                             }
                         }

@@ -958,12 +958,17 @@ function oneHundredToFraction (d) {
     case 73:
     case 74:
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return [23, 32];
 		break;
 =======
         return [23, 32];
         break;
 >>>>>>> upstream/master
+=======
+		return [23, 32];
+        break;
+>>>>>>> timbre_widget_code/Timbre_Widget
     case 75:
     case 76:
     case 77:
@@ -1007,10 +1012,16 @@ function oneHundredToFraction (d) {
     default:
         return [d, 100];
 <<<<<<< HEAD
+<<<<<<< HEAD
 		break;
 =======
         break;
 >>>>>>> upstream/master
+=======
+
+        break;
+
+>>>>>>> timbre_widget_code/Timbre_Widget
     }
 };
 

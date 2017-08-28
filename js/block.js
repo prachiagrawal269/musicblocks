@@ -1262,6 +1262,7 @@ function Block(protoblock, blocks, overrideName) {
                         that._changeLabel();
                     }
                 } else {
+
                     if (!that.blocks.inLongPress) {
                         var topBlock = that.blocks.findTopBlock(thisBlock);
                         console.log('running from ' + that.blocks.blockList[topBlock].name);
